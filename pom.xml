@@ -18,6 +18,12 @@
             <artifactId>h2</artifactId>
             <version>1.4.187</version>
         </dependency>
+        <!-- JSON -->
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20140107</version>
+        </dependency>
         <!-- Servlet / JSP -->
         <dependency>
             <groupId>javax.servlet</groupId>
