@@ -8,12 +8,15 @@
     <tr>
     <%
         if (pageSize < totalCounts && pageIndex >= pageSize) { %>
-            <td><a href="${ctxPath}/emp.do?whichPage=1"><span class="glyphicon glyphicon-fast-backward"></span></a>&nbsp;</td>
-            <td><a href="${ctxPath}/emp.do?whichPage=<%= whichPage-1 %>"><span class="glyphicon glyphicon-backward"></span></a>&nbsp;</td>
+            <td><a href="${ctxPath}/emp.do?whichPage=1"><span class="glyphicon glyphicon-fast-backward"></span></a></td>
+            <td><a href="${ctxPath}/emp.do?whichPage=<%= whichPage-1 %>"><span class="glyphicon glyphicon-backward"></span></a></td>
+    <%  } else { %>
+            <td></td>
+            <td></td>
     <%  }
         if (pageNumber > 1) { %>
             <td>
-                <select size="1" name="whichPage">
+                <select id="whichPage" size="1" name="whichPage">
                         <% for(int i = 1; i <= pageNumber; i++) { %>
                                 <option <% if (i == whichPage) { %>selected="true"<% } %> value="<%= i %>"><%= i %>
                         <% } %>
@@ -21,8 +24,8 @@
             </td>
     <%  }
         if (pageSize < totalCounts && pageIndex < pageIndexArray[pageNumber - 1]) { %>
-            <td><a href="${ctxPath}/emp.do?whichPage=<%= whichPage+1 %>"><span class="glyphicon glyphicon-forward"></span></a>&nbsp;</td>
-            <td><a href="${ctxPath}/emp.do?whichPage=<%= pageNumber %>"><span class="glyphicon glyphicon-fast-forward"></span></a>&nbsp;</td>
+            <td><a href="${ctxPath}/emp.do?whichPage=<%= whichPage+1 %>"><span class="glyphicon glyphicon-forward"></span></a></td>
+            <td><a href="${ctxPath}/emp.do?whichPage=<%= pageNumber %>"><span class="glyphicon glyphicon-fast-forward"></span></a></td>
     <%  } %>
     </tr>
 </table>
@@ -41,3 +44,10 @@
 %>
 <div style="float: right;">[ <%=beginIndex%> - <%=endIndex%> / <%=totalCounts%> ]</div>
 <div sytle="clear: both;"></div>
+<script>
+$(function() {
+    $('#whichPage').on('change', function() {
+        location.href = '${ctxPath}/emp.do?whichPage=' + $(this).val();
+    });
+});
+</script>
