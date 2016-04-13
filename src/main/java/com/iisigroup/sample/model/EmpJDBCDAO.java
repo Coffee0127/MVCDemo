@@ -12,11 +12,6 @@ import com.iisigroup.sample.common.DBInfo;
 
 public class EmpJDBCDAO implements EmpDAO {
 
-    String driver = DBInfo.DRIVER;
-    String url = DBInfo.URL;
-    String userid = DBInfo.USERID;
-    String passwd = DBInfo.PASSWD;
-
     private static final String INSERT_STMT =
         "INSERT INTO emp2 (ename,job,hiredate,sal,comm,deptno) VALUES (?, ?, ?, ?, ?, ?)";
     private static final String GET_ALL_STMT =
@@ -27,6 +22,11 @@ public class EmpJDBCDAO implements EmpDAO {
         "DELETE FROM emp2 where empno = ?";
     private static final String UPDATE =
         "UPDATE emp2 set ename=?, job=?, hiredate=?, sal=?, comm=?, deptno=? where empno = ?";
+
+    String driver = DBInfo.DRIVER;
+    String url = DBInfo.URL;
+    String userid = DBInfo.USERID;
+    String passwd = DBInfo.PASSWD;
 
     @Override
     public void insert(EmpVO empVO) {
