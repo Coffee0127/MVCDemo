@@ -35,17 +35,17 @@ public class EmpServlet extends HttpServlet {
 
         String action = request.getParameter("action");
         switch (action == null ? "query" : action) {
-            case "":
+            case "delete":
+                dao.delete(Integer.parseInt(request.getParameter("empno")));
                 break;
             case "query":
             default:
                 List<EmpVO> emps = dao.getAll();
                 request.setAttribute("emps", emps);
-                path = "MVC.jsp";
+                path = "/emp/listEmps.jsp";
+                RequestDispatcher dispatcher = request.getRequestDispatcher(path);
+                dispatcher.forward(request, response);
                 break;
         }
-
-        RequestDispatcher dispatcher = request.getRequestDispatcher(path);
-        dispatcher.forward(request, response);
     }
 }
