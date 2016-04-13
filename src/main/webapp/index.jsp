@@ -4,8 +4,8 @@
 <head>
 	<meta charset="UTF-8" />
 	<title>MVC Index</title>
-    <link href="resources/bootstrap.min.css" rel="stylesheet">
-    <link href="resources/starter-template.css" rel="stylesheet">
+    <link href="resources/css/bootstrap.min.css" rel="stylesheet">
+    <link href="resources/css/starter-template.css" rel="stylesheet">
 </head>
 <body>
     <nav class="navbar navbar-inverse navbar-fixed-top">
@@ -39,7 +39,7 @@
         </div>
     </div>
 
-    <script src="resources/jquery.min.js"></script>
-    <script src="resources/bootstrap.min.js"></script>
+    <script src="resources/js/jquery.min.js"></script>
+    <script src="resources/js/bootstrap.min.js"></script>
 </body>
 </html>
