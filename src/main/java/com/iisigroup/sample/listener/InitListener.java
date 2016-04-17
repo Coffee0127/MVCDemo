@@ -3,18 +3,25 @@ package com.iisigroup.sample.listener;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.Statement;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
 
 import com.iisigroup.sample.common.DBInfo;
+import com.iisigroup.sample.model.DeptJDBCDAO;
+import com.iisigroup.sample.model.DeptVO;
 
 @WebListener
 public class InitListener implements ServletContextListener {
 
     @Override
     public void contextInitialized(ServletContextEvent sce)  {
+        ServletContext servletContext = sce.getServletContext();
         try {
             Class.forName(DBInfo.DRIVER);
             String sql =
@@ -27,11 +34,20 @@ public class InitListener implements ServletContextListener {
             stmt.executeUpdate(sql);
             stmt.close();
             conn.close();
+
+            List<DeptVO> depts = new DeptJDBCDAO().getAll();
+            Map<Integer, String> deptMap = new HashMap<Integer, String>();
+            for (DeptVO dept : depts) {
+                deptMap.put(dept.getDeptno(), dept.getDname());
+            }
+            servletContext.setAttribute("depts", depts);
+            servletContext.setAttribute("deptMap", deptMap);
+
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        sce.getServletContext().setAttribute("ctxPath", sce.getServletContext().getContextPath());
+        servletContext.setAttribute("ctxPath", servletContext.getContextPath());
     }
 
     @Override
