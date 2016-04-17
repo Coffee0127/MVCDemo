@@ -17,6 +17,7 @@
     }
     table tr td input, table tr td select {
         border: 1px solid #ddd;
+        padding: 2px 5px;
     }
     .error {
         color: red;
@@ -30,7 +31,7 @@
 </head>
 <body>
     <jsp:include page="/WEB-INF/layout/header.jsp" />
-    <form action="${ctxPath}/emp.do" method="post".>
+    <form action="${ctxPath}/emp.do" method="post" autocomplete="off">
         <div class="container">
             <div class="starter-template">
                 <h1>MVC Demo</h1>
@@ -66,17 +67,16 @@
                                     <th>部門編號</th>
                                     <td><select name="deptno">
                                         <option value="">請選擇</option>
-                                    	<option value="10" ${param.deptno == 10 ? 'selected' : ''}>財務部</option>
-                                    	<option value="20" ${param.deptno == 20 ? 'selected' : ''}>研發部</option>
-                                    	<option value="30" ${param.deptno == 30 ? 'selected' : ''}>業務部</option>
-                                    	<option value="40" ${param.deptno == 40 ? 'selected' : ''}>生管部</option>
+                                        <c:forEach var="deptVO" items="${depts}">
+                                            <option value="${deptVO.deptno}"${param.deptno eq deptVO.deptno ? ' selected' : ''}>${deptVO.dname}</option>
+                                        </c:forEach>
                                     </select><span <c:if test="${not empty errorMsgs['deptno']}">class="error"</c:if>>${errorMsgs['deptno']}</span></td>
                                 </tr>
                             </table>
                         </div>
                         <div class="modal-footer" style="text-align: center;">
-                            <button id="btnInsert" type="button" class="btn btn-primary" onclick="document.forms[0].submit();">新增</button>
-                            <button id="btncancel" type="button" class="btn btn-danger" onclick="location.href='${ctxPath}/emp.do';">取消</button>
+                            <button id="btnInsert" type="button" class="btn btn-primary" onclick="document.forms[0].submit();"><span style="padding-right: 5px;" class="glyphicon glyphicon-pencil"></span>新增</button>
+                            <button id="btncancel" type="button" class="btn btn-danger" onclick="location.href='${ctxPath}/emp.do';"><span style="padding-right: 5px;" class="glyphicon glyphicon-remove"></span>取消</button>
                             <input name="action" type="hidden" value="add" />
                         </div>
                     </div>
