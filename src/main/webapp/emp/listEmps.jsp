@@ -47,7 +47,7 @@
                         <th>職稱</th>
                         <th>雇用日期</th>
                         <th>部門編號</th>
-                        <th><button type="button" class="btn btn-primary"><span style="padding-right: 5px;" class="glyphicon glyphicon-plus"></span>新增</button></th>
+                        <th><button type="button" class="btn btn-primary" onclick="location.href='${ctxPath}/emp/addEmp.jsp';return false;"><span style="padding-right: 5px;" class="glyphicon glyphicon-plus"></span>新增</button></th>
                     </tr>
                 </thead>
                 <% java.util.List list = (java.util.List) request.getAttribute("emps"); %>

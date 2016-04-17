@@ -4,6 +4,7 @@ $(function() {
 	var path = location.pathname.substr(location.pathname.lastIndexOf('/') + 1);
 	switch (path) {
 	   case 'emp.do':
+	   case 'editEmp.jsp':
 		   $('#mvc').addClass('active');
 		   break;
 	   case '':
