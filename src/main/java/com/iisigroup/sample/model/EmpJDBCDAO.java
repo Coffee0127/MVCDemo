@@ -23,10 +23,10 @@ public class EmpJDBCDAO implements EmpDAO {
     private static final String UPDATE =
         "UPDATE emp2 set ename=?, job=?, hiredate=?, sal=?, comm=?, deptno=? where empno = ?";
 
-    String driver = DBInfo.DRIVER;
-    String url = DBInfo.URL;
-    String userid = DBInfo.USERID;
-    String passwd = DBInfo.PASSWD;
+    private static final String driver = DBInfo.DRIVER;
+    private static final String url = DBInfo.URL;
+    private static final String userid = DBInfo.USERID;
+    private static final String passwd = DBInfo.PASSWD;
 
     @Override
     public void insert(EmpVO empVO) {
