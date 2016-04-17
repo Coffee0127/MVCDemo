@@ -4,8 +4,8 @@
 <!doctype html>
 <html lang="en">
 <head>
-	<meta charset="UTF-8" />
-	<title>MVC Sample</title>
+    <meta charset="UTF-8" />
+    <title>MVC Sample</title>
     <jsp:include page="/WEB-INF/layout/meta.jsp" />
     <style>
     table tr th {
