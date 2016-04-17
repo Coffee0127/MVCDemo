@@ -44,7 +44,6 @@
                             <table class="table table-bordered">
                                 <tr>
                                     <th>姓名</th>
-                                    
                                     <td><input type="text" name="ename" value="${param.ename}" /><span <c:if test="${not empty errorMsgs['ename']}">class="error"</c:if>>${errorMsgs['ename']}</span></td>
                                 </tr>
                                 <tr>
