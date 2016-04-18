@@ -1,6 +1,7 @@
 package com.iisigroup.sample.controller;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -14,6 +15,8 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.json.JSONObject;
 
 import com.iisigroup.sample.model.EmpDAO;
 import com.iisigroup.sample.model.EmpJDBCDAO;
@@ -43,6 +46,9 @@ public class EmpServlet extends HttpServlet {
             case "add":
                 path = doAddAction(request);
                 break;
+            case "update":
+                doUpdateAction(request, response);
+                return;
             case "delete":
                 empDAO.delete(Integer.parseInt(request.getParameter("empno")));
                 return;
@@ -55,75 +61,81 @@ public class EmpServlet extends HttpServlet {
         dispatcher.forward(request, response);
     }
 
-    /**
-     * @param request
-     * @return
-     */
+    private void doUpdateAction(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType("text/html;charset=UTF-8");
+        PrintWriter pw = response.getWriter();
+
+        Map<String, String> errorMsgs = validateRequest(request);
+        String paramEmpno = request.getParameter("empno");
+        if (isBlank(paramEmpno) || !isNaturalNumbers(paramEmpno)) {
+            errorMsgs.put("empno", "請填寫員工編號");
+        }
+        if (!errorMsgs.isEmpty()) {
+            pw.write(new JSONObject(errorMsgs).toString());
+            pw.flush();
+            return;
+        }
+
+        EmpVO empVO = retrieveEmpVO(request);
+        empVO.setEmpno(Integer.parseInt(request.getParameter("empno")));
+        empDAO.update(empVO);
+        pw.println(new JSONObject("{res:0}"));
+        pw.flush();
+    }
+
+    private EmpVO retrieveEmpVO(HttpServletRequest request) {
+        EmpVO empVO = new EmpVO();
+        empVO.setEname(request.getParameter("ename"));
+        empVO.setJob(request.getParameter("job"));
+        empVO.setHiredate(new Date(parseDate(request.getParameter("hiredate")).getTime()));
+        empVO.setSal(Integer.parseInt(request.getParameter("sal")));
+        empVO.setComm(Double.parseDouble(request.getParameter("comm")));
+        empVO.setDeptno(Integer.parseInt(request.getParameter("deptno")));
+        return empVO;
+    }
+
     private String doQueryAction(HttpServletRequest request) {
         List<EmpVO> emps = empDAO.getAll();
         request.setAttribute("emps", emps);
         return "/emp/listEmps.jsp";
     }
 
-    /**
-     * @param request
-     * @param path
-     * @return
-     */
-    private String doAddAction(HttpServletRequest request) {
+    private Map<String, String> validateRequest(HttpServletRequest request) {
         Map<String, String> errorMsgs = new HashMap<String, String>();
-        String ename = request.getParameter("ename");
-        if (isBlank(ename)) {
+        if (isBlank(request.getParameter("ename"))) {
             errorMsgs.put("ename", "請填寫員工姓名");
         }
-        String job = request.getParameter("job");
-        if (isBlank(job)) {
+        if (isBlank(request.getParameter("job"))) {
             errorMsgs.put("job", "請填寫職稱");
         }
         String paramHiredate = request.getParameter("hiredate");
-        Date hiredate = null;
-        if (isBlank(paramHiredate)) {
-            errorMsgs.put("hiredate", "請填寫雇用日期");
-        } else {
-            try {
-                hiredate = new Date(new SimpleDateFormat("yyyy-MM-dd").parse(paramHiredate).getTime());
-            } catch (ParseException e) {
-                errorMsgs.put("hiredate", "請填寫正確日期格式");
-            }
+        if (isBlank(paramHiredate) || !isValidDate(paramHiredate)) {
+            errorMsgs.put("hiredate", "請填寫正確雇用日期");
         }
         String paramSal = request.getParameter("sal");
-        Integer sal = null;
         if (isBlank(paramSal) || !isNaturalNumbers(paramSal)) {
             errorMsgs.put("sal", "請填寫正確薪水");
-        } else {
-            sal = Integer.parseInt(paramSal);
         }
         String paramComm = request.getParameter("comm");
-        Double comm = null;
         if (isBlank(paramComm) || !isPositiveDouble(paramComm)) {
             errorMsgs.put("comm", "請填寫正確加給");
-        } else {
-            comm = Double.parseDouble(paramComm);
         }
         String paramDeptno = request.getParameter("deptno");
-        Integer deptno = null;
         if (isBlank(paramDeptno) || !isNaturalNumbers(paramDeptno)) {
             errorMsgs.put("deptno", "請選擇部門");
-        } else {
-            deptno = Integer.parseInt(paramDeptno);
         }
+        return errorMsgs;
+    }
+
+    private String doAddAction(HttpServletRequest request) {
+        Map<String, String> errorMsgs = validateRequest(request);
         if (!errorMsgs.isEmpty()) {
             request.setAttribute("errorMsgs", errorMsgs);
             return "/emp/addEmp.jsp";
         }
 
-        EmpVO empVO = new EmpVO();
-        empVO.setEname(ename);
-        empVO.setJob(job);
-        empVO.setHiredate(hiredate);
-        empVO.setSal(sal);
-        empVO.setComm(comm);
-        empVO.setDeptno(deptno);
+        EmpVO empVO = retrieveEmpVO(request);
         empDAO.insert(empVO);
 
         return doQueryAction(request);
@@ -139,5 +151,22 @@ public class EmpServlet extends HttpServlet {
 
     private boolean isPositiveDouble(String number) {
         return number.matches("\\d*|\\d*\\.\\d*") && Double.parseDouble(number) > 0;
+    }
+
+    private boolean isValidDate(String dateString) {
+        try {
+            parseDate(dateString);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    private java.util.Date parseDate(String dateString) {
+        try {
+            return new SimpleDateFormat("yyyy-MM-dd").parse(dateString);
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
