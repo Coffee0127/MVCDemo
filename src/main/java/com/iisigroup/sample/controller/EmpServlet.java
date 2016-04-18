@@ -50,7 +50,7 @@ public class EmpServlet extends HttpServlet {
                 doUpdateAction(request, response);
                 return;
             case "delete":
-                empDAO.delete(Integer.parseInt(request.getParameter("empno")));
+                doDeleteAction(request);
                 return;
             case "query":
             default:
@@ -61,11 +61,24 @@ public class EmpServlet extends HttpServlet {
         dispatcher.forward(request, response);
     }
 
+    private String doAddAction(HttpServletRequest request) {
+        Map<String, String> errorMsgs = validateRequest(request);
+        if (!errorMsgs.isEmpty()) {
+            request.setAttribute("errorMsgs", errorMsgs);
+            return "/emp/addEmp.jsp";
+        }
+    
+        EmpVO empVO = retrieveEmpVO(request);
+        empDAO.insert(empVO);
+    
+        return doQueryAction(request);
+    }
+
     private void doUpdateAction(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setCharacterEncoding("UTF-8");
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter pw = response.getWriter();
-
+    
         Map<String, String> errorMsgs = validateRequest(request);
         String paramEmpno = request.getParameter("empno");
         if (isBlank(paramEmpno) || !isNaturalNumbers(paramEmpno)) {
@@ -76,12 +89,22 @@ public class EmpServlet extends HttpServlet {
             pw.flush();
             return;
         }
-
+    
         EmpVO empVO = retrieveEmpVO(request);
         empVO.setEmpno(Integer.parseInt(request.getParameter("empno")));
         empDAO.update(empVO);
         pw.println(new JSONObject("{res:0}"));
         pw.flush();
+    }
+
+    private void doDeleteAction(HttpServletRequest request) {
+        empDAO.delete(Integer.parseInt(request.getParameter("empno")));
+    }
+
+    private String doQueryAction(HttpServletRequest request) {
+        List<EmpVO> emps = empDAO.getAll();
+        request.setAttribute("emps", emps);
+        return "/emp/listEmps.jsp";
     }
 
     private EmpVO retrieveEmpVO(HttpServletRequest request) {
@@ -93,12 +116,6 @@ public class EmpServlet extends HttpServlet {
         empVO.setComm(Double.parseDouble(request.getParameter("comm")));
         empVO.setDeptno(Integer.parseInt(request.getParameter("deptno")));
         return empVO;
-    }
-
-    private String doQueryAction(HttpServletRequest request) {
-        List<EmpVO> emps = empDAO.getAll();
-        request.setAttribute("emps", emps);
-        return "/emp/listEmps.jsp";
     }
 
     private Map<String, String> validateRequest(HttpServletRequest request) {
@@ -126,19 +143,6 @@ public class EmpServlet extends HttpServlet {
             errorMsgs.put("deptno", "請選擇部門");
         }
         return errorMsgs;
-    }
-
-    private String doAddAction(HttpServletRequest request) {
-        Map<String, String> errorMsgs = validateRequest(request);
-        if (!errorMsgs.isEmpty()) {
-            request.setAttribute("errorMsgs", errorMsgs);
-            return "/emp/addEmp.jsp";
-        }
-
-        EmpVO empVO = retrieveEmpVO(request);
-        empDAO.insert(empVO);
-
-        return doQueryAction(request);
     }
 
     private boolean isBlank(String value) {
