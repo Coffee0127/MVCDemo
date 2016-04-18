@@ -12,7 +12,7 @@ import com.iisigroup.sample.common.DBInfo;
 
 public class DeptJDBCDAO implements DeptDAO {
 
-    private static final String INSERT_STMT = "INSERT INTO dept2 (deptno,dname,loc) VALUES (dept2_seq.NEXTVAL, ?, ?)";
+    private static final String INSERT_STMT = "INSERT INTO dept2 (dname, loc) VALUES (?, ?)";
     private static final String GET_ALL_STMT = "SELECT deptno , dname, loc FROM dept2";
     private static final String GET_ONE_STMT = "SELECT deptno , dname, loc FROM dept2 where deptno = ?";
 

@@ -67,7 +67,8 @@ public class HelloServlet extends HttpServlet {
             out.println("                <ul class='nav navbar-nav'>");
             out.println("                    <li><a href='" + request.getContextPath() + "'>Home</a></li>");
             out.println("                    <li class='active'><a href='" + request.getContextPath() + "/hello.do'>Without MVC</a></li>");
-            out.println("                    <li><a href='" + request.getContextPath() + "/emp.do'>With MVC</a></li>");
+            out.println("                    <li><a href='" + request.getContextPath() + "/emp.do'>With MVC(員工)</a></li>");
+            out.println("                    <li><a href='" + request.getContextPath() + "/dept.do'>With MVC(部門)</a></li>");
             out.println("                </ul>");
             out.println("            </div>");
             out.println("            <!--/.nav-collapse -->");
