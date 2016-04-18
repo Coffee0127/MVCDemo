@@ -8,8 +8,8 @@
     <tr>
     <%
         if (pageSize < totalCounts && pageIndex >= pageSize) { %>
-            <td><a href="${ctxPath}/emp.do?whichPage=1"><span class="glyphicon glyphicon-fast-backward"></span></a></td>
-            <td><a href="${ctxPath}/emp.do?whichPage=<%= whichPage-1 %>"><span class="glyphicon glyphicon-backward"></span></a></td>
+            <td><a href="${ctxPath}/<%=action%>?whichPage=1"><span class="glyphicon glyphicon-fast-backward"></span></a></td>
+            <td><a href="${ctxPath}/<%=action%>?whichPage=<%= whichPage-1 %>"><span class="glyphicon glyphicon-backward"></span></a></td>
     <%  } else { %>
             <td></td>
             <td></td>
@@ -24,8 +24,8 @@
             </td>
     <%  }
         if (pageSize < totalCounts && pageIndex < pageIndexArray[pageNumber - 1]) { %>
-            <td><a href="${ctxPath}/emp.do?whichPage=<%= whichPage+1 %>"><span class="glyphicon glyphicon-forward"></span></a></td>
-            <td><a href="${ctxPath}/emp.do?whichPage=<%= pageNumber %>"><span class="glyphicon glyphicon-fast-forward"></span></a></td>
+            <td><a href="${ctxPath}/<%=action%>?whichPage=<%= whichPage+1 %>"><span class="glyphicon glyphicon-forward"></span></a></td>
+            <td><a href="${ctxPath}/<%=action%>?whichPage=<%= pageNumber %>"><span class="glyphicon glyphicon-fast-forward"></span></a></td>
     <%  } %>
     </tr>
 </table>
@@ -47,7 +47,7 @@
 <script>
 $(function() {
     $('#whichPage').on('change', function() {
-        location.href = '${ctxPath}/emp.do?whichPage=' + $(this).val();
+        location.href = '${ctxPath}/<%=action%>?whichPage=' + $(this).val();
     });
 });
 </script>

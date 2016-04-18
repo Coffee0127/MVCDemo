@@ -83,6 +83,7 @@
                 </c:forEach>
             </table>
             <div style="padding: 0px 1.5em;">
+                <% String action = "emp.do"; %>
                 <%@ include file="/WEB-INF/pages/page2.file" %>
             </div>
         </div>
