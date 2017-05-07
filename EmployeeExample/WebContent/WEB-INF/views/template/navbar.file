@@ -8,7 +8,7 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="#">MVC</a>
+      <a class="navbar-brand" href="${ctxPath}">MVC</a>
     </div>
 
     <!-- 手機隱藏選單區 -->
@@ -16,8 +16,8 @@
       <!-- 左選單 -->
       <ul class="nav navbar-nav">
         <li><a href="${ctxPath}/listAllEmp-NoMVC.jsp">員工 - NoMVC</a></li>
-        <li><a href="#">員工 - MVC</a></li>
-        <li><a href="#">部門 - MVC</a></li>
+        <li><a href="${ctxPath}/emp.do">員工 - MVC</a></li>
+        <li><a href="${ctxPath}/dept.do">部門 - MVC</a></li>
       </ul>
     </div>
     <!-- 手機隱藏選單區結束 -->
