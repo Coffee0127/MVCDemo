@@ -6,4 +6,7 @@ public final class DBInfo {
     public static final String URL = "jdbc:oracle:thin:@localhost:1521:XE";
     public static final String USERID = "SCOTT";
     public static final String PASSWD = "TIGER";
+
+    private DBInfo() {
+    }
 }
