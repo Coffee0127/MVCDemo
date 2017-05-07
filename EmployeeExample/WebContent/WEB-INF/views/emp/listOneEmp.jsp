@@ -19,12 +19,15 @@
     <%@ include file="/WEB-INF/views/template/navbar.file" %>
 
     <div class="container">
+      <div class="btn-group" style="padding: 15px;">
+        <a id="btnBack" class="btn btn-default" role="button"><span class="fju-btn-icon glyphicon glyphicon-arrow-left"></span>返回</a>
+      </div>
       <div class="panel panel-default">
         <div class="panel-heading">
           <h3 class="panel-title">顯示員工 - ${empVO.empno}</h3>
         </div>
         <div class="panel-body">
-          <form class="form-horizontal" action="${ctxPath}/emp.do" method="post" novalidate>
+          <form id="form" class="form-horizontal" action="${ctxPath}/emp.do" method="post" novalidate>
             <div class="form-group">
               <label for="empno" class="col-xs-12 col-sm-3 control-label">員工編號</label>
               <div class="col-xs-12 col-sm-4 form-control-static">
@@ -104,10 +107,9 @@
               </c:if>
             </div>
             <div class="form-group">
-              <div class="col-xs-12 col-sm-8 col-sm-offset-2">
-                <button id="btnBack" type="button" class="btn btn-default"><span style="padding-right: 5px;" class="glyphicon glyphicon-arrow-left"></span>返回</button>
-                <button id="btnUpdate" type="button" class="btn btn-primary"><span style="padding-right: 5px;" class="glyphicon glyphicon-pencil"></span>儲存</button>
-                <button id="btnDelete" type="button" class="btn btn-danger"><span style="padding-right: 5px;" class="glyphicon glyphicon-trash"></span>刪除</button>
+              <div class="col-xs-12 col-sm-3 control-label">
+                <button id="btnUpdate" type="button" class="btn btn-primary"><span class="fju-btn-icon glyphicon glyphicon-pencil"></span>儲存</button>
+                <button id="btnDelete" type="button" class="btn btn-danger"><span class="fju-btn-icon glyphicon glyphicon-trash"></span>刪除</button>
               </div>
             </div>
             <input type="hidden" name="action" value="" />
@@ -122,27 +124,28 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script src="${ctxPath}/assets/js/main.js"></script>
     <script>
-    $(function() {
-      $('#btnBack').on('click', function() {
-        var $form = $(this).parents('form');
-        $form.find('input[name="action"]').val('query');
-        $form.submit();
-      });
-
-      $('#btnUpdate').on('click', function() {
-        var $form = $(this).parents('form');
-        $form.find('input[name="action"]').val('update');
-        $form.submit();
-      });
-
-      $('#btnDelete').on('click', function() {
-        if (confirm('確定刪除員工 - ${empVO.empno} ?')) {
-          var $form = $(this).parents('form');
-          $form.find('input[name="action"]').val('delete');
+      $(function() {
+        $('#btnBack').on('click', function() {
+          var $form = $('#form');
+          $form.find('input[name="action"]').val('query');
+          $form.find('input[name="empno"]').val('');
           $form.submit();
-        }
+        });
+
+        $('#btnUpdate').on('click', function() {
+          var $form = $('#form');
+          $form.find('input[name="action"]').val('update');
+          $form.submit();
+        });
+
+        $('#btnDelete').on('click', function() {
+          if (confirm('確定刪除員工 - ${empVO.empno} ?')) {
+            var $form = $('#form');
+            $form.find('input[name="action"]').val('delete');
+            $form.submit();
+          }
+        });
       });
-    });
     </script>
   </body>
 </html>
