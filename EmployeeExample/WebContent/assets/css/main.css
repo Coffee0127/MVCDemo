@@ -1,3 +1,20 @@
 .navbar {
   border-radius: 0;
 }
+
+.fju-input-error {
+  color: red;
+}
+
+.fju-input-error:before {
+  content: '*';
+  padding-right: 0.5em;
+}
+
+table.fju-list-table th td, table.fju-list-table tr td {
+  vertical-align: middle;
+}
+
+tr.fju-edited td {
+  background-color: #c8deff;
+}

@@ -19,9 +19,9 @@
     <%@ include file="/WEB-INF/views/template/navbar.file" %>
 
     <div class="container">
-        <div class="btn-group" style="padding: 15px;">
-          <a href="${ctxPath}/emp.do?action=preAdd" class="btn btn-success" role="button">新增</a>
-        </div>
+      <div class="btn-group" style="padding: 15px;">
+        <a href="${ctxPath}/emp.do?action=preAdd" class="btn btn-success" role="button">新增</a>
+      </div>
       <div class="panel panel-default">
         <div class="panel-heading">
           <h3 class="panel-title">查詢條件</h3>
@@ -60,7 +60,7 @@
           <h3 class="panel-title">查詢結果</h3>
         </div>
         <div class="panel-body">
-          <table class="table table-hover">
+          <table class="fju-list-table table table-hover">
             <thead>
               <tr>
                 <th>員工編號</th>
@@ -70,13 +70,14 @@
                 <th>薪水</th>
                 <th>獎金</th>
                 <th>部門</th>
+                <th></th>
               </tr>
             </thead>
             <tbody>
               <% java.util.List list = (java.util.List) request.getAttribute("empList"); %>
               <%@ include file="/WEB-INF/views/template/pagination/page1.file" %>
               <c:forEach var="empVO" items="${empList}" begin="<%=pageIndex%>" end="<%=pageIndex+pageSize-1%>">
-                <tr>
+                <tr class="${param.empno == empVO.empno ? 'fju-edited' : ''}">
                   <td>${empVO.empno}</td>
                   <td>${empVO.ename}</td>
                   <td>${empVO.job}</td>
@@ -84,6 +85,14 @@
                   <td>${empVO.sal}</td>
                   <td>${empVO.comm}</td>
                   <td>${empVO.deptno}</td>
+                  <td>
+                    <form action="${ctxPath}/emp.do" method="post">
+                      <button class="btn btn-info"><span style="padding-right: 5px;" class="glyphicon glyphicon-edit"></span>更新</button>
+                      <input type="hidden" name="action" value="preUpdate" />
+                      <input type="hidden" name="empno" value="${empVO.empno}" />
+                      <input type="hidden" name="whichPage" value="<%=whichPage%>" />
+                    </form>
+                  </td>
                 </tr>
               </c:forEach>
             </tbody>

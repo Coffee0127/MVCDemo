@@ -20,8 +20,7 @@ import tw.edu.fju.sample.service.EmpService;
 public class EmpServlet extends HttpServlet {
 
     private static final String PAGE_ADD_EMP = "/WEB-INF/views/emp/addEmp.jsp";
-    private static final String PAGE_UPDATE_EMP = "";
-    private static final String PAGE_ONE_EMP = "";
+    private static final String PAGE_UPDATE_EMP = "/WEB-INF/views/emp/listOneEmp.jsp";
     private static final String PAGE_LIST_EMP = "/WEB-INF/views/emp/listAllEmp.jsp";
 
     private EmpService empService = new EmpService();
@@ -39,21 +38,30 @@ public class EmpServlet extends HttpServlet {
         String path = null;
         String action = request.getParameter("action");
         switch (action == null ? "query" : action) {
+            // 轉交至新增頁面
             case "preAdd":
                 path = PAGE_ADD_EMP;
                 break;
+            // 執行新增
             case "add":
                 path = doAddAction(request);
                 break;
+            // 轉交至更新頁面
+            case "preUpdate":
+                path = doFindOneAction(request);
+                break;
+            // 執行更新
             case "update":
                 path = doUpdateAction(request, response);
                 break;
+            // 執行刪除
             case "delete":
                 path = doDeleteAction(request);
                 break;
+            // 執行查詢
             case "query":
             default:
-                path = doQueryAction(request);
+                path = doFindAction(request);
                 break;
         }
 
@@ -62,69 +70,99 @@ public class EmpServlet extends HttpServlet {
     }
 
     private String doAddAction(HttpServletRequest request) {
-        Map<String, String> errorMsgs = validateRequest(request);
+        Map<String, String> errorMsgs = new HashMap<>();
+        EmpVO empVO = retrieveEmpVO(request, errorMsgs);
         if (!errorMsgs.isEmpty()) {
             request.setAttribute("errorMsgs", errorMsgs);
-            return "/emp/addEmp.jsp";
+            request.setAttribute("empVO", empVO);
+            return PAGE_ADD_EMP;
         }
 
-        EmpVO empVO = retrieveEmpVO(request);
         empService.insert(empVO);
-
-        return doQueryAction(request);
+        return doFindAction(request);
     }
 
     private String doUpdateAction(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        return doQueryAction(request);
+        Map<String, String> errorMsgs = new HashMap<>();
+        EmpVO empVO = retrieveEmpVO(request, errorMsgs);
+        if (!errorMsgs.isEmpty()) {
+            request.setAttribute("errorMsgs", errorMsgs);
+            request.setAttribute("empVO", empVO);
+            return PAGE_UPDATE_EMP;
+        }
+
+        empService.update(empVO);
+        return doFindAction(request);
     }
 
     private String doDeleteAction(HttpServletRequest request) {
         empService.delete(Integer.parseInt(request.getParameter("empno")));
-        return doQueryAction(request);
+        return doFindAction(request);
     }
 
-    private String doQueryAction(HttpServletRequest request) {
+    private String doFindOneAction(HttpServletRequest request) {
+        String empno = request.getParameter("empno");
+        EmpVO empVO = empService.findByPrimaryKey(Integer.parseInt(empno));
+        request.setAttribute("empVO", empVO);
+        return PAGE_UPDATE_EMP;
+    }
+
+    private String doFindAction(HttpServletRequest request) {
         List<EmpVO> emps = empService.findAll();
         request.setAttribute("empList", emps);
         return PAGE_LIST_EMP;
     }
 
-    private EmpVO retrieveEmpVO(HttpServletRequest request) {
+    /**
+     * @param errorMsgs 用來存放請求參數輸入格式錯誤
+     */
+    private EmpVO retrieveEmpVO(HttpServletRequest request, Map<String, String> errorMsgs) {
         EmpVO empVO = new EmpVO();
-        empVO.setEname(request.getParameter("ename"));
-        empVO.setJob(request.getParameter("job"));
-        empVO.setHiredate(new Date(parseDate(request.getParameter("hiredate")).getTime()));
-        empVO.setSal(Integer.parseInt(request.getParameter("sal")));
-        empVO.setComm(Double.parseDouble(request.getParameter("comm")));
-        empVO.setDeptno(Integer.parseInt(request.getParameter("deptno")));
-        return empVO;
-    }
+        empVO.setEmpno(Integer.parseInt(request.getParameter("empno")));
 
-    private Map<String, String> validateRequest(HttpServletRequest request) {
-        Map<String, String> errorMsgs = new HashMap<>();
-        if (isBlank(request.getParameter("ename"))) {
+        String ename = request.getParameter("ename");
+        if (isBlank(ename)) {
             errorMsgs.put("ename", "請填寫員工姓名");
+        } else {
+            empVO.setEname(ename.trim());
         }
-        if (isBlank(request.getParameter("job"))) {
+
+        String job = request.getParameter("job");
+        if (isBlank(job)) {
             errorMsgs.put("job", "請填寫職稱");
+        } else {
+            empVO.setJob(job.trim());
         }
+
         String paramHiredate = request.getParameter("hiredate");
         if (isBlank(paramHiredate) || !isValidDate(paramHiredate)) {
             errorMsgs.put("hiredate", "請填寫正確雇用日期");
+        } else {
+            empVO.setHiredate(new Date(parseDate(request.getParameter("hiredate").trim()).getTime()));
         }
+
         String paramSal = request.getParameter("sal");
         if (isBlank(paramSal) || !isNaturalNumbers(paramSal)) {
             errorMsgs.put("sal", "請填寫正確薪水");
+        } else {
+            empVO.setSal(Integer.parseInt(request.getParameter("sal")));
         }
+
         String paramComm = request.getParameter("comm");
         if (isBlank(paramComm) || !isPositiveDouble(paramComm)) {
-            errorMsgs.put("comm", "請填寫正確加給");
+            errorMsgs.put("comm", "請填寫正確獎金");
+        } else {
+            empVO.setComm(Double.parseDouble(request.getParameter("comm")));
         }
+
         String paramDeptno = request.getParameter("deptno");
         if (isBlank(paramDeptno) || !isNaturalNumbers(paramDeptno)) {
             errorMsgs.put("deptno", "請選擇部門");
+        } else {
+            empVO.setDeptno(Integer.parseInt(request.getParameter("deptno")));
         }
-        return errorMsgs;
+
+        return empVO;
     }
 
     private boolean isBlank(String value) {
