@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page trimDirectiveWhitespaces="true" %>
-<%@ page import="java.sql.*, java.util.*, tw.edu.fju.sample.model.*" %>
+<%@ page import="java.sql.*, java.util.*, tw.edu.fju.sample.model.*, tw.edu.fju.sample.common.*" %>
 <%
 List<EmpVO> list = new ArrayList<>();
 
@@ -10,8 +10,8 @@ PreparedStatement pstmt = null;
 ResultSet rs = null;
 
 try {
-    Class.forName("oracle.jdbc.driver.OracleDriver");
-    con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:XE", "SCOTT", "TIGER");
+    Class.forName(DBInfo.DRIVER);
+    con = DriverManager.getConnection(DBInfo.URL, DBInfo.USERID, DBInfo.PASSWD);
     pstmt = con.prepareStatement("SELECT * FROM emp2 order by empno");
     rs = pstmt.executeQuery();
 
