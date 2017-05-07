@@ -20,7 +20,7 @@
 
     <div class="container">
       <div class="btn-group" style="padding: 15px;">
-        <a href="${ctxPath}/emp.do?action=preAdd" class="btn btn-success" role="button">新增</a>
+        <a href="${ctxPath}/emp.do?action=preAdd" class="btn btn-success" role="button"><span class="fju-btn-icon glyphicon glyphicon-plus"></span>新增</a>
       </div>
       <div class="panel panel-default">
         <div class="panel-heading">
@@ -84,7 +84,7 @@
                   <td>${empVO.hiredate}</td>
                   <td>${empVO.sal}</td>
                   <td>${empVO.comm}</td>
-                  <td>${empVO.deptno}</td>
+                  <td>${deptMap[empVO.deptno]}</td>
                   <td>
                     <form action="${ctxPath}/emp.do" method="post">
                       <button class="btn btn-info"><span style="padding-right: 5px;" class="glyphicon glyphicon-edit"></span>更新</button>
@@ -107,11 +107,11 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script src="${ctxPath}/assets/js/main.js"></script>
     <script>
-    $(function() {
-      $('#whichPage').on('change', function() {
-        location.href = '${ctxPath}/<%=action%>?whichPage=' + $(this).val();
+      $(function() {
+        $('#whichPage').on('change', function() {
+          location.href = '${ctxPath}/<%=action%>?whichPage=' + $(this).val();
+        });
       });
-    });
     </script>
   </body>
 </html>
