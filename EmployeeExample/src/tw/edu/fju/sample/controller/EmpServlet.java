@@ -85,6 +85,7 @@ public class EmpServlet extends HttpServlet {
     private String doUpdateAction(HttpServletRequest request, HttpServletResponse response) throws IOException {
         Map<String, String> errorMsgs = new HashMap<>();
         EmpVO empVO = retrieveEmpVO(request, errorMsgs);
+        empVO.setEmpno(Integer.parseInt(request.getParameter("empno")));
         if (!errorMsgs.isEmpty()) {
             request.setAttribute("errorMsgs", errorMsgs);
             request.setAttribute("empVO", empVO);
@@ -118,7 +119,6 @@ public class EmpServlet extends HttpServlet {
      */
     private EmpVO retrieveEmpVO(HttpServletRequest request, Map<String, String> errorMsgs) {
         EmpVO empVO = new EmpVO();
-        empVO.setEmpno(Integer.parseInt(request.getParameter("empno")));
 
         String ename = request.getParameter("ename");
         if (isBlank(ename)) {

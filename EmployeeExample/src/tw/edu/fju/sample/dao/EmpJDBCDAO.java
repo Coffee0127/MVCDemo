@@ -16,9 +16,9 @@ import tw.edu.fju.sample.model.EmpVO;
 public class EmpJDBCDAO implements EmpDAO {
 
     private static final String INSERT_STMT =
-        "INSERT INTO emp2 (ename,job,hiredate,sal,comm,deptno) VALUES (?, ?, ?, ?, ?, ?)";
+        "INSERT INTO emp2 (empno,ename,job,hiredate,sal,comm,deptno) VALUES (emp2_seq.NEXTVAL,?, ?, ?, ?, ?, ?)";
     private static final String GET_ALL_STMT =
-        "SELECT * FROM emp2";
+        "SELECT * FROM emp2 ORDER BY empno";
     private static final String GET_ALL_BASE_STMT =
         "SELECT * FROM emp2 WHERE 1 = 1";
     private static final String GET_ONE_STMT =
