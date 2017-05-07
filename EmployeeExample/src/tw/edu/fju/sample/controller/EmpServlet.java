@@ -1,5 +1,9 @@
 package tw.edu.fju.sample.controller;
 
+import static tw.edu.fju.sample.utils.ValidateUtils.isBlank;
+import static tw.edu.fju.sample.utils.ValidateUtils.isNaturalNumbers;
+import static tw.edu.fju.sample.utils.ValidateUtils.isPositiveDouble;
+
 import java.io.IOException;
 import java.sql.Date;
 import java.text.ParseException;
@@ -13,6 +17,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import tw.edu.fju.sample.model.EmpVO;
 import tw.edu.fju.sample.service.EmpService;
@@ -22,6 +27,7 @@ public class EmpServlet extends HttpServlet {
     private static final String PAGE_ADD_EMP = "/WEB-INF/views/emp/addEmp.jsp";
     private static final String PAGE_UPDATE_EMP = "/WEB-INF/views/emp/listOneEmp.jsp";
     private static final String PAGE_LIST_EMP = "/WEB-INF/views/emp/listAllEmp.jsp";
+    private static final String PAGE_LIST_EMP_BY_COMPOSITE = "/WEB-INF/views/emp/listAllEmp_ByCompositeQuery.jsp";
 
     private EmpService empService = new EmpService();
 
@@ -57,6 +63,10 @@ public class EmpServlet extends HttpServlet {
             // 執行刪除
             case "delete":
                 path = doDeleteAction(request);
+                break;
+            // 執行複合查詢
+            case "queryByComposite":
+                path = doCompositeFindAction(request);
                 break;
             // 執行查詢
             case "query":
@@ -114,6 +124,25 @@ public class EmpServlet extends HttpServlet {
         return PAGE_LIST_EMP;
     }
 
+    @SuppressWarnings("unchecked")
+    private String doCompositeFindAction(HttpServletRequest request) {
+
+        HttpSession session = request.getSession();
+        Map<String, String> conditions = (Map<String, String>) session.getAttribute("conditions");
+        if (isBlank(request.getParameter("whichPage"))) {
+            HashMap<String, String> conditionMap = new HashMap<>();
+            conditionMap.put("empno", request.getParameter("empno"));
+            conditionMap.put("ename", request.getParameter("ename"));
+            conditionMap.put("deptno", request.getParameter("deptno"));
+            conditions = (Map<String, String>) conditionMap.clone();
+            session.setAttribute("conditions", conditionMap);
+        }
+
+        List<EmpVO> emps = empService.findAll(conditions);
+        request.setAttribute("empList", emps);
+        return PAGE_LIST_EMP_BY_COMPOSITE;
+    }
+
     /**
      * @param errorMsgs 用來存放請求參數輸入格式錯誤
      */
@@ -163,18 +192,6 @@ public class EmpServlet extends HttpServlet {
         }
 
         return empVO;
-    }
-
-    private boolean isBlank(String value) {
-        return value == null || value.trim().length() == 0;
-    }
-
-    private boolean isNaturalNumbers(String number) {
-        return number.matches("\\d*") && Integer.parseInt(number) > 0;
-    }
-
-    private boolean isPositiveDouble(String number) {
-        return number.matches("\\d*|\\d*\\.\\d*") && Double.parseDouble(number) > 0;
     }
 
     private boolean isValidDate(String dateString) {

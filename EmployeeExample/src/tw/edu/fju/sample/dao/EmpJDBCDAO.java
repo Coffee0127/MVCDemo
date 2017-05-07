@@ -12,6 +12,7 @@ import java.util.Map.Entry;
 
 import tw.edu.fju.sample.common.DBInfo;
 import tw.edu.fju.sample.model.EmpVO;
+import tw.edu.fju.sample.utils.ValidateUtils;
 
 public class EmpJDBCDAO implements EmpDAO {
 
@@ -219,14 +220,24 @@ public class EmpJDBCDAO implements EmpDAO {
     @Override
     public List<EmpVO> findAll(Map<String, String> conditions) {
         StringBuilder sql = new StringBuilder(GET_ALL_BASE_STMT);
-        if (conditions != null) {
+
+        do {
+            if (conditions == null) {
+                break;
+            }
+
             for (Entry<String, String> entry : conditions.entrySet()) {
+                if (ValidateUtils.isBlank(entry.getValue())) {
+                    continue;
+                }
                 String condition = transformCondition(entry.getKey(), entry.getValue());
                 if (condition != null) {
                     sql.append(" and ").append(condition);
                 }
             }
-        }
+        } while (false);
+
+        sql.append(" ORDER BY empno");
         System.out.println("●●finalSQL = " + sql);
         return this.doFindAll(sql.toString());
     }
@@ -243,12 +254,12 @@ public class EmpJDBCDAO implements EmpDAO {
             case "sal":
             case "comm":
             case "deptno":
-                return columnName + "=" + value;
+                return columnName + " = " + value;
             case "ename":
             case "job":
                 return columnName + " like '%" + value + "%'";
             case "hiredate":
-                return "to_char(" + columnName + ",'yyyy-mm-dd')='" + value + "'";
+                return "to_char(" + columnName + ",'yyyy-mm-dd') = '" + value + "'";
             default:
                 return null;
         }

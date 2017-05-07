@@ -24,6 +24,45 @@
       </div>
       <div class="panel panel-default">
         <div class="panel-heading">
+          <h3 class="panel-title">查詢條件</h3>
+        </div>
+        <div class="panel-body">
+          <form class="form-horizontal" action="${ctxPath}/emp.do" method="post" novalidate>
+            <div class="form-group">
+              <label for="empno" class="col-xs-12 col-sm-3 control-label">員工編號</label>
+              <div class="col-xs-12 col-sm-4">
+                <input type="text" name="empno" id="empno" placeholder="員工編號" class="form-control" value="${conditions['empno']}" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="ename" class="col-xs-12 col-sm-3 control-label">員工姓名</label>
+              <div class="col-xs-12 col-sm-4">
+                <input type="text" name="ename" id="ename" placeholder="員工姓名" class="form-control" value="${conditions['ename']}" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="deptno" class="col-xs-12 col-sm-3 control-label">部門編號</label>
+              <div class="col-xs-12 col-sm-4">
+                <select name="deptno" class="form-control">
+                  <option value="">請選擇</option>
+                  <option value="10" ${10 == conditions['deptno'] ? 'selected' : ''}>財務部</option>
+                  <option value="20" ${20 == conditions['deptno'] ? 'selected' : ''}>研發部</option>
+                  <option value="30" ${30 == conditions['deptno'] ? 'selected' : ''}>業務部</option>
+                  <option value="40" ${40 == conditions['deptno'] ? 'selected' : ''}>生管部</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="col-xs-12 col-sm-3 control-label">
+                <button class="btn btn-primary"><span class="fju-btn-icon glyphicon glyphicon-search"></span>查詢</button>
+              </div>
+            </div>
+            <input type="hidden" name="action" value="queryByComposite" />
+          </form>
+        </div>
+      </div>
+      <div class="panel panel-default">
+        <div class="panel-heading">
           <h3 class="panel-title">查詢結果</h3>
         </div>
         <div class="panel-body">
@@ -65,7 +104,7 @@
             </tbody>
           </table>
           <% String action = "emp.do"; %>
-          <%@ include file="/WEB-INF/views/template/pagination/page2.file" %>
+          <%@ include file="/WEB-INF/views/template/pagination/page2_ByCompositeQuery.file" %>
         </div>
       </div>
     </div>
