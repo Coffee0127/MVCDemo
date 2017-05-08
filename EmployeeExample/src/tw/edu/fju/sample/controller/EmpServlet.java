@@ -43,6 +43,7 @@ public class EmpServlet extends HttpServlet {
 
         String path = null;
         String action = request.getParameter("action");
+        /*************************** 根據 action 不同呼叫對應的 doXXXAction 處理邏輯 ***************************/
         switch (action == null ? "query" : action) {
             // 轉交至新增頁面
             case "preAdd":
@@ -58,7 +59,7 @@ public class EmpServlet extends HttpServlet {
                 break;
             // 執行更新
             case "update":
-                path = doUpdateAction(request, response);
+                path = doUpdateAction(request);
                 break;
             // 執行刪除
             case "delete":
@@ -75,44 +76,56 @@ public class EmpServlet extends HttpServlet {
                 break;
         }
 
+        // 根據 doXXXAction 處理結果進行轉交
         RequestDispatcher dispatcher = request.getRequestDispatcher(path);
         dispatcher.forward(request, response);
     }
 
     private String doAddAction(HttpServletRequest request) {
         Map<String, String> errorMsgs = new HashMap<>();
+        /*************************** 接收請求參數 並做 輸入格式的錯誤處理 ***************************/
         EmpVO empVO = retrieveEmpVO(request, errorMsgs);
         if (!errorMsgs.isEmpty()) {
             request.setAttribute("errorMsgs", errorMsgs);
+            // 含有輸入格式錯誤的empVO物件，也存入 HttpServletRequest
             request.setAttribute("empVO", empVO);
+            // 將頁面轉交回原本新增頁面
             return PAGE_ADD_EMP;
         }
 
+        /*************************** 開始新增資料 ***************************/
         empService.insert(empVO);
         return doFindAction(request);
     }
 
-    private String doUpdateAction(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    private String doUpdateAction(HttpServletRequest request) {
         Map<String, String> errorMsgs = new HashMap<>();
+        /*************************** 接收請求參數 並做 輸入格式的錯誤處理 ***************************/
         EmpVO empVO = retrieveEmpVO(request, errorMsgs);
         empVO.setEmpno(Integer.parseInt(request.getParameter("empno")));
         if (!errorMsgs.isEmpty()) {
             request.setAttribute("errorMsgs", errorMsgs);
+            // 含有輸入格式錯誤的empVO物件，也存入 HttpServletRequest
             request.setAttribute("empVO", empVO);
+            // 將頁面轉交回原本修改頁面
             return PAGE_UPDATE_EMP;
         }
 
+        /*************************** 開始修改資料 ***************************/
         empService.update(empVO);
         return doFindAction(request);
     }
 
     private String doDeleteAction(HttpServletRequest request) {
+        /*************************** 開始刪除資料 ***************************/
         empService.delete(Integer.parseInt(request.getParameter("empno")));
         return doFindAction(request);
     }
 
     private String doFindOneAction(HttpServletRequest request) {
+        // 小心！傳入的 empno 可能不是數字
         String empno = request.getParameter("empno");
+        /*************************** 開始查詢資料 ***************************/
         EmpVO empVO = empService.findByPrimaryKey(Integer.parseInt(empno));
         request.setAttribute("empVO", empVO);
         return PAGE_UPDATE_EMP;
@@ -120,6 +133,7 @@ public class EmpServlet extends HttpServlet {
 
     private String doFindAction(HttpServletRequest request) {
         List<EmpVO> emps = empService.findAll();
+        /*************************** 開始查詢資料 ***************************/
         request.setAttribute("empList", emps);
         return PAGE_LIST_EMP;
     }
