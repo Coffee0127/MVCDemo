@@ -39,12 +39,5 @@
         <url-pattern>/emp.do</url-pattern>
     </servlet-mapping>
 
-    <servlet>
-        <servlet-name>DeptServlet</servlet-name>
-        <servlet-class>tw.edu.fju.sample.controller.DeptServlet</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>DeptServlet</servlet-name>
-        <url-pattern>/dept.do</url-pattern>
-    </servlet-mapping>
+    <!-- TODO 08. 註冊 DeptServlet，需撰寫 <servlet> 及 <servlet-mapping> -->
 </web-app>

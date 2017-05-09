@@ -1,26 +1,7 @@
 package tw.edu.fju.sample.model;
 
 public class DeptVO {
-    private Integer deptno;
-    private String dname;
-    private String loc;
 
-    public Integer getDeptno() {
-        return deptno;
-    }
-    public void setDeptno(Integer deptno) {
-        this.deptno = deptno;
-    }
-    public String getDname() {
-        return dname;
-    }
-    public void setDname(String dname) {
-        this.dname = dname;
-    }
-    public String getLoc() {
-        return loc;
-    }
-    public void setLoc(String loc) {
-        this.loc = loc;
-    }
+    // TODO 01. 根據資料庫 DEPT2 表格建立 value object
+
 }

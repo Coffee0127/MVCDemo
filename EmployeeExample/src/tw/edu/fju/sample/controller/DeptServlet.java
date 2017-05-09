@@ -1,10 +1,9 @@
 package tw.edu.fju.sample.controller;
 
 import java.io.IOException;
-import java.util.HashMap;
+import java.io.PrintWriter;
 import java.util.Map;
 
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -12,8 +11,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import tw.edu.fju.sample.model.DeptVO;
 import tw.edu.fju.sample.service.DeptService;
-import tw.edu.fju.sample.utils.ValidateUtils;
 
+// TODO 08. 於 web.xml 註冊 DeptServlet
 public class DeptServlet extends HttpServlet {
 
     private static final String PAGE_ADD_DEPT = "/WEB-INF/views/dept/addDept.jsp";
@@ -32,89 +31,78 @@ public class DeptServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        String path = null;
-        String action = request.getParameter("action");
-        switch (action == null ? "query" : action) {
-            // 轉交至新增頁面
-            case "preAdd":
-                path = PAGE_ADD_DEPT;
-                break;
-            // 執行新增
-            case "add":
-                path = doAddAction(request);
-                break;
-            // 轉交至更新頁面
-            case "preUpdate":
-                path = doFindOneAction(request);
-                break;
-            // 執行更新
-            case "update":
-                path = doUpdateAction(request, response);
-                break;
-            // 執行刪除
-            case "delete":
-                path = doDeleteAction(request);
-                break;
-            // 執行查詢
-            case "query":
-            default:
-                path = doFindAction(request);
-                break;
-        }
+        // TODO 09-1. 測試 web.xml 是否已正確註冊
+        // http://localhost:8080/EmployeeExample/dept.do
+        // 測試完畢後將以下三行程式碼註解 / 刪除
+        response.setContentType("text/html; charset=UTF-8");
+        PrintWriter out = response.getWriter();
+        out.println("<h1>Hello World!!</h1>");
 
-        RequestDispatcher dispatcher = request.getRequestDispatcher(path);
-        dispatcher.forward(request, response);
+        // TODO 09-2. 先將以下轉交程式碼註解取消，並實作查詢 action
+//        String path = null;
+//        String action = request.getParameter("action");
+//        switch (action == null ? "query" : action) {
+//            // 轉交至新增頁面
+//            /*case "preAdd":
+//                path = PAGE_ADD_DEPT;
+//                break;*/
+//            // 執行新增
+//            /*case "add":
+//                path = doAddAction(request);
+//                break;*/
+//            // 轉交至更新頁面
+//            /*case "preUpdate":
+//                path = doFindOneAction(request);
+//                break;*/
+//            // 執行更新
+//            /*case "update":
+//                path = doUpdateAction(request, response);
+//                break;*/
+//            // 執行刪除
+//            /*case "delete":
+//                path = doDeleteAction(request);
+//                break;*/
+//            // 執行查詢
+//            /*case "query":
+//            default:
+//                path = doFindAction(request);
+//                break;*/
+//        }
+//
+//        RequestDispatcher dispatcher = request.getRequestDispatcher(path);
+//        dispatcher.forward(request, response);
     }
 
     private String doFindAction(HttpServletRequest request) {
-        request.setAttribute("deptList", deptService.findAll());
+        // TODO 10. 透過 DeptService 實作 doFindAction
+        // 同時需修改 /WEB-INF/views/dept/listAllDept.jsp 取出查詢結果
         return PAGE_LIST_DEPT;
     }
 
     private String doAddAction(HttpServletRequest request) {
-        Map<String, String> errorMsgs = new HashMap<>();
-        /*************************** 接收請求參數 並做 輸入格式的錯誤處理 ***************************/
-        DeptVO deptVO = retrieveDeptVO(request, errorMsgs);
-        if (!errorMsgs.isEmpty()) {
-            request.setAttribute("errorMsgs", errorMsgs);
-            // 含有輸入格式錯誤的deptVO物件，也存入 HttpServletRequest
-            request.setAttribute("deptVO", deptVO);
-            // 將頁面轉交回原本新增頁面
-            return PAGE_ADD_DEPT;
-        }
-
-        /*************************** 開始新增資料 ***************************/
-        deptService.insert(deptVO);
+        // TODO 11-1. 透過 DeptService 實作 doAddAction
+        // Hint: 需檢查前端送上來的資料格式是否正確，若有錯誤需導回 PAGE_ADD_DEPT；無錯誤則導回查詢頁面
+        // 同時需修改 /WEB-INF/views/dept/addDept.jsp 讀取資料格式正確的 DeptVO 及 錯誤訊息
         return doFindAction(request);
     }
 
     private String doFindOneAction(HttpServletRequest request) {
-        String deptno = request.getParameter("deptno");
-        DeptVO deptVO = deptService.findByPrimaryKey(Integer.parseInt(deptno));
-        request.setAttribute("deptVO", deptVO);
+        // TODO 12. 透過 DeptService 實作 doFindOneAction
+        // Hint: 透過主鍵查詢 DeptVO 物件轉交 PAGE_UPDATE_DEPT 進行修改
+        // 同時修改 /WEB-INF/views/dept/listOneDept.jsp 讀取主鍵查詢的 DeptVO 物件
         return PAGE_UPDATE_DEPT;
     }
 
     private String doUpdateAction(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        Map<String, String> errorMsgs = new HashMap<>();
-        /*************************** 接收請求參數 並做 輸入格式的錯誤處理 ***************************/
-        DeptVO deptVO = retrieveDeptVO(request, errorMsgs);
-        deptVO.setDeptno(Integer.parseInt(request.getParameter("deptno")));
-        if (!errorMsgs.isEmpty()) {
-            request.setAttribute("errorMsgs", errorMsgs);
-            // 含有輸入格式錯誤的deptVO物件，也存入 HttpServletRequest
-            request.setAttribute("deptVO", deptVO);
-            // 將頁面轉交回原本修改頁面
-            return PAGE_UPDATE_DEPT;
-        }
-
-        /*************************** 開始修改資料 ***************************/
-        deptService.update(deptVO);
+        // TODO 13. 透過 DeptService 實作 doUpdateAction
+        // Hint: 需檢查前端送上來的資料格式是否正確，若有錯誤需導回 PAGE_UPDATE_DEPT；無錯誤則導回查詢頁面
+        // 同時修改 /WEB-INF/views/dept/listOneDept.jsp 讀取資料格式正確的 DeptVO 及 錯誤訊息
         return doFindAction(request);
     }
 
     private String doDeleteAction(HttpServletRequest request) {
-        deptService.delete(Integer.parseInt(request.getParameter("deptno")));
+        // TODO 14. 透過 DeptService 實作 doDeleteAction
+        // Hint: 刪除完後導回查詢頁面
         return doFindAction(request);
     }
 
@@ -123,6 +111,7 @@ public class DeptServlet extends HttpServlet {
      */
     private DeptVO retrieveDeptVO(HttpServletRequest request, Map<String, String> errorMsgs) {
         DeptVO deptVO = new DeptVO();
+        // TODO 11-2. 從 HttpServletRequest 讀取前端送入參數，進行格式檢查及將有效格式參數存入 DeptVO
 
         /*
          ***************************************************************
@@ -131,20 +120,6 @@ public class DeptServlet extends HttpServlet {
          * 否則 將 someProperty 存入 deptVO                            *
          ***************************************************************
          */
-
-        String dname = request.getParameter("dname");
-        if (ValidateUtils.isBlank(dname)) {
-            errorMsgs.put("dname", "請填寫部門名稱");
-        } else {
-            deptVO.setDname(dname.trim());
-        }
-
-        String loc = request.getParameter("loc");
-        if (ValidateUtils.isBlank(loc)) {
-            errorMsgs.put("loc", "請填寫部門基地");
-        } else {
-            deptVO.setLoc(loc.trim());
-        }
 
         return deptVO;
     }

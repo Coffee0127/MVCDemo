@@ -37,13 +37,24 @@
               </tr>
             </thead>
             <tbody>
+
+
+              <%-- 從 request 取出查詢結果，使 page1.file 分頁變數生效 --%>
               <% java.util.List list = (java.util.List) request.getAttribute("deptList"); %>
               <%@ include file="/WEB-INF/views/template/pagination/page1.file" %>
+
+
+              <%-- 透過 forEach 取出 list 內所有 DeptVO 物件 --%>
               <c:forEach var="deptVO" items="${deptList}" begin="<%=pageIndex%>" end="<%=pageIndex+pageSize-1%>">
                 <tr class="${param.deptno == deptVO.deptno ? 'fju-edited' : ''}">
-                  <td>${deptVO.deptno}</td>
-                  <td>${deptVO.dname}</td>
-                  <td>${deptVO.loc}</td>
+
+
+                  <%-- 使用 EL 取出 deptVO 內所有屬性 --%>
+                  <td>${deptVO}</td>
+                  <td>${deptVO}</td>
+                  <td>${deptVO}</td>
+
+
                   <td>
                     <form action="${ctxPath}/dept.do" method="post">
                       <button class="btn btn-info"><span style="padding-right: 5px;" class="glyphicon glyphicon-edit"></span>更新</button>
@@ -56,8 +67,13 @@
               </c:forEach>
             </tbody>
           </table>
-          <% String action = "dept.do"; %>
+          
+          
+          <%-- 修改 action 指向 DeptServlet 對應的 URL --%>
+          <% String action = "XXX.do"; %>
           <%@ include file="/WEB-INF/views/template/pagination/page2.file" %>
+
+
         </div>
       </div>
     </div>
@@ -68,7 +84,7 @@
     <script>
       $(function() {
         $('#whichPage').on('change', function() {
-          location.href = '${ctxPath}/<%=action%>?whichPage=' + $(this).val();
+          location.href = '${ctxPath}/dept.do?whichPage=' + $(this).val();
         });
       });
     </script>

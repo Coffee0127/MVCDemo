@@ -24,37 +24,63 @@
       </div>
       <div class="panel panel-default">
         <div class="panel-heading">
-          <h3 class="panel-title">顯示部門 - ${deptVO.deptno}</h3>
+          <%-- 使用 EL 讀取 deptVO 內的 deptno 屬性 --%>
+          <h3 class="panel-title">顯示部門 - ${deptVO}</h3>
         </div>
         <div class="panel-body">
           <form id="form" class="form-horizontal" action="${ctxPath}/dept.do" method="post" novalidate>
             <div class="form-group">
               <label for="deptno" class="col-xs-12 col-sm-3 control-label">部門編號</label>
               <div class="col-xs-12 col-sm-4 form-control-static">
-                <span>${deptVO.deptno}</span>
+
+
+                <%-- 使用 EL 讀取 deptVO 內的 deptno 屬性 --%>
+                <span>${deptVO}</span>
+
+
               </div>
             </div>
             <div class="form-group">
               <label for="dname" class="col-xs-12 col-sm-3 control-label">部門名稱</label>
               <div class="col-xs-12 col-sm-4">
-                <input type="text" name="dname" id="dname" placeholder="部門名稱" class="form-control" value="${deptVO.dname}" />
+
+
+                <%-- 使用 EL 讀取 deptVO 內的 dname 屬性 --%>
+                <input type="text" name="dname" id="dname" placeholder="部門名稱" class="form-control" value="${deptVO}" />
+
+
               </div>
-              <c:if test="${not empty errorMsgs['dname']}">
+
+
+              <%-- 檢查是否含有 dname 的錯誤訊息 --%>
+              <c:if test="${not empty errorMsgs['XXXXX']}">
                 <div class="col-xs-12 col-sm-4 form-control-static">
-                  <div class="fju-input-error">${errorMsgs['dname']}</div>
+                  <%-- 讀取 errorMsgs 內的 dname 錯誤訊息 --%>
+                  <div class="fju-input-error">${errorMsgs['XXXXX']}</div>
                 </div>
               </c:if>
+
+
             </div>
             <div class="form-group">
               <label for="loc" class="col-xs-12 col-sm-3 control-label">部門基地</label>
               <div class="col-xs-12 col-sm-4">
-                <input type="text" name="loc" id="loc" placeholder="部門基地" class="form-control" value="${deptVO.loc}" />
+
+
+                <%-- 使用 EL 讀取 deptVO 內的 loc 屬性 --%>
+                <input type="text" name="loc" id="loc" placeholder="部門基地" class="form-control" value="${deptVO}" />
               </div>
-              <c:if test="${not empty errorMsgs['loc']}">
+
+
+              <%-- 檢查是否含有 loc 的錯誤訊息 --%>
+              <c:if test="${not empty errorMsgs['OOOOO']}">
                 <div class="col-xs-12 col-sm-4 form-control-static">
-                  <div class="fju-input-error">${errorMsgs['loc']}</div>
+                  <%-- 讀取 errorMsgs 內的 loc 錯誤訊息 --%>
+                  <div class="fju-input-error">${errorMsgs['OOOOO']}</div>
                 </div>
               </c:if>
+
+
             </div>
             <div class="form-group">
               <div class="col-xs-12 col-sm-3 control-label">

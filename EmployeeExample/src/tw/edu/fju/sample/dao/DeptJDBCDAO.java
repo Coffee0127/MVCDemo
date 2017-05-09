@@ -1,11 +1,5 @@
 package tw.edu.fju.sample.dao;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 import tw.edu.fju.sample.common.DBInfo;
@@ -13,7 +7,7 @@ import tw.edu.fju.sample.model.DeptVO;
 
 public class DeptJDBCDAO implements DeptDAO {
 
-    private static final String INSERT_STMT = "INSERT INTO dept2 (deptno, dname, loc) VALUES (dept2_seq.NEXTVAL, ?, ?)";
+    private static final String INSERT_STMT = "INSERT INTO dept2 (dname, loc) VALUES (?, ?)";
     private static final String GET_ALL_STMT = "SELECT * FROM dept2";
     private static final String GET_ONE_STMT = "SELECT * FROM dept2 where deptno = ?";
     private static final String DELETE_EMPS_STMT = "DELETE FROM emp2 where deptno = ?";
@@ -26,241 +20,74 @@ public class DeptJDBCDAO implements DeptDAO {
     private static final String passwd = DBInfo.PASSWD;
 
     static {
-        try {
-            Class.forName(driver);
-            // Handle any driver errors
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException("Couldn't load database driver. " + e.getMessage());
-        }
+        // TODO 02. 載入驅動程式
     }
 
     @Override
     public void insert(DeptVO deptVO) {
-        Connection con = null;
-        PreparedStatement pstmt = null;
-
-        try {
-            con = DriverManager.getConnection(url, userid, passwd);
-            pstmt = con.prepareStatement(INSERT_STMT);
-
-            pstmt.setString(1, deptVO.getDname());
-            pstmt.setString(2, deptVO.getLoc());
-
-            pstmt.executeUpdate();
-
-            // Handle any SQL errors
-        } catch (SQLException se) {
-            throw new RuntimeException("A database error occured. " + se.getMessage());
-            // Clean up JDBC resources
-        } finally {
-            if (pstmt != null) {
-                try {
-                    pstmt.close();
-                } catch (SQLException se) {
-                    se.printStackTrace(System.err);
-                }
-            }
-            if (con != null) {
-                try {
-                    con.close();
-                } catch (Exception e) {
-                    e.printStackTrace(System.err);
-                }
-            }
-        }
+        // TODO 03-1. 完成新增程式碼
+        // Hint: java.sql.PreparedStatement.executeUpdate()
     }
 
     @Override
     public void update(DeptVO deptVO) {
-        Connection con = null;
-        PreparedStatement pstmt = null;
-
-        try {
-            con = DriverManager.getConnection(url, userid, passwd);
-            pstmt = con.prepareStatement(UPDATE);
-
-            pstmt.setString(1, deptVO.getDname());
-            pstmt.setString(2, deptVO.getLoc());
-            pstmt.setInt(3, deptVO.getDeptno());
-
-            pstmt.executeUpdate();
-
-            // Handle any SQL errors
-        } catch (SQLException se) {
-            throw new RuntimeException("A database error occured. " + se.getMessage());
-            // Clean up JDBC resources
-        } finally {
-            if (pstmt != null) {
-                try {
-                    pstmt.close();
-                } catch (SQLException se) {
-                    se.printStackTrace(System.err);
-                }
-            }
-            if (con != null) {
-                try {
-                    con.close();
-                } catch (Exception e) {
-                    e.printStackTrace(System.err);
-                }
-            }
-        }
+        // TODO 04-1. 完成修改程式碼
+        // Hint: java.sql.PreparedStatement.executeUpdate()
     }
 
     @Override
     public void delete(Integer deptno) {
+        // TODO 05-1. 完成刪除程式碼
+        // Hint: java.sql.PreparedStatement.executeUpdate()
         // 先刪除員工，再刪除部門
-        int updateCountEMPs = 0;
-        Connection con = null;
-        PreparedStatement pstmt = null;
-
-        try {
-            con = DriverManager.getConnection(url, userid, passwd);
-
-            // 1●設定於 pstm.executeUpdate()之前
-            con.setAutoCommit(false);
-
-            // 先刪除員工
-            pstmt = con.prepareStatement(DELETE_EMPS_STMT);
-            pstmt.setInt(1, deptno);
-            updateCountEMPs = pstmt.executeUpdate();
-            // 再刪除部門
-            pstmt = con.prepareStatement(DELETE_DEPT_STMT);
-            pstmt.setInt(1, deptno);
-            pstmt.executeUpdate();
-
-            // 2●設定於 pstm.executeUpdate()之後
-            con.commit();
-            con.setAutoCommit(true);
-            System.out.println("刪除部門編號" + deptno + "時,共有員工" + updateCountEMPs + "人同時被刪除");
-
-            // Handle any SQL errors
-        } catch (SQLException se) {
-            if (con != null) {
-                try {
-                    // 3●設定於當有exception發生時之catch區塊內
-                    con.rollback();
-                } catch (SQLException excep) {
-                    throw new RuntimeException("rollback error occured. " + excep.getMessage());
-                }
-            }
-            throw new RuntimeException("A database error occured. " + se.getMessage());
-        } finally {
-            if (pstmt != null) {
-                try {
-                    pstmt.close();
-                } catch (SQLException se) {
-                    se.printStackTrace(System.err);
-                }
-            }
-            if (con != null) {
-                try {
-                    con.close();
-                } catch (Exception e) {
-                    e.printStackTrace(System.err);
-                }
-            }
-        }
     }
 
     @Override
     public DeptVO findByPrimaryKey(Integer deptno) {
-        DeptVO deptVO = null;
-        Connection con = null;
-        PreparedStatement pstmt = null;
-        ResultSet rs = null;
-
-        try {
-            con = DriverManager.getConnection(url, userid, passwd);
-            pstmt = con.prepareStatement(GET_ONE_STMT);
-
-            pstmt.setInt(1, deptno);
-            rs = pstmt.executeQuery();
-
-            while (rs.next()) {
-                // deptVO 也稱為 Domain objects
-                deptVO = new DeptVO();
-                deptVO.setDeptno(rs.getInt("deptno"));
-                deptVO.setDname(rs.getString("dname"));
-                deptVO.setLoc(rs.getString("loc"));
-            }
-
-            // Handle any SQL errors
-        } catch (SQLException se) {
-            throw new RuntimeException("A database error occured. " + se.getMessage());
-            // Clean up JDBC resources
-        } finally {
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException se) {
-                    se.printStackTrace(System.err);
-                }
-            }
-            if (pstmt != null) {
-                try {
-                    pstmt.close();
-                } catch (SQLException se) {
-                    se.printStackTrace(System.err);
-                }
-            }
-            if (con != null) {
-                try {
-                    con.close();
-                } catch (Exception e) {
-                    e.printStackTrace(System.err);
-                }
-            }
-        }
-        return deptVO;
+        // TODO 06-1. 完成主鍵查詢程式碼
+        // Hint: java.sql.PreparedStatement.executeQuery()
+        return null;
     }
 
     @Override
     public List<DeptVO> findAll() {
-        List<DeptVO> list = new ArrayList<>();
-        Connection con = null;
-        PreparedStatement pstmt = null;
-        ResultSet rs = null;
+        // TODO 07-1. 完成查詢程式碼
+        // Hint: java.sql.PreparedStatement.executeQuery()
+        return null;
+    }
 
-        try {
-            con = DriverManager.getConnection(url, userid, passwd);
-            pstmt = con.prepareStatement(GET_ALL_STMT);
-            rs = pstmt.executeQuery();
+    public static void main(String[] args) {
+        DeptDAO dao = new DeptJDBCDAO();
 
-            while (rs.next()) {
-                DeptVO deptVO = new DeptVO();
-                deptVO.setDeptno(rs.getInt("deptno"));
-                deptVO.setDname(rs.getString("dname"));
-                deptVO.setLoc(rs.getString("loc"));
-                list.add(deptVO); // Store the row in the list
-            }
+        // TODO 03-2. 測試新增
+//        DeptVO deptVO1 = new DeptVO();
+//        deptVO1.setDname("製造部");
+//        deptVO1.setLoc("中國江西");
+//        dao.insert(deptVO1);
 
-            // Handle any SQL errors
-        } catch (SQLException se) {
-            throw new RuntimeException("A database error occured. " + se.getMessage());
-        } finally {
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException se) {
-                    se.printStackTrace(System.err);
-                }
-            }
-            if (pstmt != null) {
-                try {
-                    pstmt.close();
-                } catch (SQLException se) {
-                    se.printStackTrace(System.err);
-                }
-            }
-            if (con != null) {
-                try {
-                    con.close();
-                } catch (Exception e) {
-                    e.printStackTrace(System.err);
-                }
-            }
-        }
-        return list;
+        // TODO 04-2. 測試修改
+//        DeptVO deptVO2 = new DeptVO();
+//        deptVO2.setDeptno(10);
+//        deptVO2.setDname("財務部2");
+//        deptVO2.setLoc("臺灣台北2");
+//        dao.update(deptVO2);
+
+        // TODO 05-2. 測試刪除
+//        dao.delete(30);
+
+        // TODO 06-2. 測試主鍵查詢
+//        DeptVO deptVO3 = dao.findByPrimaryKey(10);
+//        System.out.print(deptVO3.getDeptno() + ",");
+//        System.out.print(deptVO3.getDname() + ",");
+//        System.out.println(deptVO3.getLoc());
+
+        // TODO 07-2. 測試查詢
+//        List<DeptVO> list = dao.getAll();
+//        for (DeptVO aDept : list) {
+//            System.out.print(aDept.getDeptno() + ",");
+//            System.out.print(aDept.getDname() + ",");
+//            System.out.print(aDept.getLoc());
+//            System.out.println();
+//        }
     }
 }
