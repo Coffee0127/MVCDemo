@@ -38,4 +38,13 @@
         <servlet-name>EmpServlet</servlet-name>
         <url-pattern>/emp.do</url-pattern>
     </servlet-mapping>
+
+    <servlet>
+        <servlet-name>DeptServlet</servlet-name>
+        <servlet-class>tw.edu.fju.sample.controller.DeptServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>DeptServlet</servlet-name>
+        <url-pattern>/dept.do</url-pattern>
+    </servlet-mapping>
 </web-app>
