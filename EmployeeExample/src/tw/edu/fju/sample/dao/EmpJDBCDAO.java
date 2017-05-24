@@ -320,4 +320,60 @@ public class EmpJDBCDAO implements EmpDAO {
         }
         return list;
     }
+
+    @Override
+    public void insert(List<EmpVO> empVOs) {
+        Connection con = null;
+        PreparedStatement pstmt = null;
+
+        try {
+            con = DriverManager.getConnection(url, userid, passwd);
+            // 1●設定於 pstm.executeUpdate()之前
+            con.setAutoCommit(false);
+
+            pstmt = con.prepareStatement(INSERT_STMT);
+
+            for (EmpVO empVO : empVOs) {
+                pstmt.setString(1, empVO.getEname());
+                pstmt.setString(2, empVO.getJob());
+                pstmt.setDate(3, empVO.getHiredate());
+                pstmt.setDouble(4, empVO.getSal());
+                pstmt.setDouble(5, empVO.getComm());
+                pstmt.setInt(6, empVO.getDeptno());
+                pstmt.executeUpdate();
+            }
+
+            // 2●設定於 pstm.executeUpdate()之後
+            con.commit();
+            con.setAutoCommit(true);
+
+            // Handle any SQL errors
+        } catch (SQLException se) {
+            if (con != null) {
+                try {
+                    // 3●設定於當有exception發生時之catch區塊內
+                    con.rollback();
+                } catch (SQLException excep) {
+                    throw new RuntimeException("rollback error occured. " + excep.getMessage());
+                }
+            }
+            throw new RuntimeException("A database error occured. " + se.getMessage());
+            // Clean up JDBC resources
+        } finally {
+            if (pstmt != null) {
+                try {
+                    pstmt.close();
+                } catch (SQLException se) {
+                    se.printStackTrace(System.err);
+                }
+            }
+            if (con != null) {
+                try {
+                    con.close();
+                } catch (Exception e) {
+                    e.printStackTrace(System.err);
+                }
+            }
+        }
+    }
 }

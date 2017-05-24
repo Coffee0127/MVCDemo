@@ -21,6 +21,7 @@
     <div class="container">
       <div class="btn-group" style="padding: 15px;">
         <a href="${ctxPath}/emp.do?action=preAdd" class="btn btn-success" role="button"><span class="fju-btn-icon glyphicon glyphicon-plus"></span>新增</a>
+        <a href="${ctxPath}/emp.do?action=preAddEmps" class="btn btn-success" role="button"><span class="fju-btn-icon glyphicon glyphicon-plus"></span>多筆新增</a>
       </div>
       <div class="panel panel-default">
         <div class="panel-heading">

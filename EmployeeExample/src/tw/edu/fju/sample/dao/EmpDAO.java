@@ -18,4 +18,10 @@ public interface EmpDAO {
      * @return
      */
     List<EmpVO> findAll(Map<String, String> conditions);
+
+    /**
+     * 同時新增多筆員工
+     * @param empVO
+     */
+    void insert(List<EmpVO> empVOs);
 }

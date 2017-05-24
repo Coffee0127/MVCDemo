@@ -34,4 +34,8 @@ public class EmpService {
     public List<EmpVO> findAll(Map<String, String> conditions) {
         return this.dao.findAll(conditions);
     }
+
+    public void insert(List<EmpVO> empVOs) {
+        this.dao.insert(empVOs);
+    }
 }

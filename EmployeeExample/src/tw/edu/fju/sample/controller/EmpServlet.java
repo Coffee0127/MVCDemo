@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,15 +20,22 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import com.google.gson.Gson;
+
+import tw.edu.fju.sample.model.EmpJSON;
 import tw.edu.fju.sample.model.EmpVO;
 import tw.edu.fju.sample.service.EmpService;
+import tw.edu.fju.sample.utils.GsonTypes;
 
 public class EmpServlet extends HttpServlet {
 
     private static final String PAGE_ADD_EMP = "/WEB-INF/views/emp/addEmp.jsp";
+    private static final String PAGE_ADD_EMPS = "/WEB-INF/views/emp/addEmps.jsp";
     private static final String PAGE_UPDATE_EMP = "/WEB-INF/views/emp/listOneEmp.jsp";
     private static final String PAGE_LIST_EMP = "/WEB-INF/views/emp/listAllEmp.jsp";
     private static final String PAGE_LIST_EMP_BY_COMPOSITE = "/WEB-INF/views/emp/listAllEmp_ByCompositeQuery.jsp";
+
+    private static final Gson GSON = new Gson();
 
     private EmpService empService = new EmpService();
 
@@ -52,6 +60,14 @@ public class EmpServlet extends HttpServlet {
             // 執行新增
             case "add":
                 path = doAddAction(request);
+                break;
+                // 轉交至新增頁面
+            case "preAddEmps":
+                path = doPreAddEmpsAction(request);
+                break;
+                // 執行新增
+            case "addEmps":
+                path = doAddEmpsAction(request);
                 break;
             // 轉交至更新頁面
             case "preUpdate":
@@ -95,6 +111,87 @@ public class EmpServlet extends HttpServlet {
 
         /*************************** 開始新增資料 ***************************/
         empService.insert(empVO);
+        return doFindAction(request);
+    }
+
+    private String doPreAddEmpsAction(HttpServletRequest request) {
+        List<EmpVO> empVOs = new ArrayList<>();
+        empVOs.add(new EmpVO());
+        request.setAttribute("empVOs", empVOs);
+        return PAGE_ADD_EMPS;
+    }
+
+    private String doAddEmpsAction(HttpServletRequest request) {
+        /** 1. Retrieve Form Data */
+        List<EmpJSON> empJSONs = GSON.fromJson(request.getParameter("emps"), GsonTypes.LIST_EMP_JSON_TYPE);
+
+        /** 2. Convert Form Data & 3. Validate Form Data */
+        List<EmpVO> empVOs = new ArrayList<>();
+        List<Map<String, String>> errorMsgsList = new ArrayList<>();
+        for (EmpJSON json : empJSONs) {
+            EmpVO empVO = new EmpVO();
+            Map<String, String> errorMsgs = new HashMap<>();
+
+            String ename = json.getEname();
+            if (isBlank(ename)) {
+                errorMsgs.put("ename", "請填寫員工姓名");
+            } else {
+                empVO.setEname(ename.trim());
+            }
+
+            String job = json.getJob();
+            if (isBlank(job)) {
+                errorMsgs.put("job", "請填寫職稱");
+            } else {
+                empVO.setJob(job.trim());
+            }
+
+            String paramHiredate = json.getHiredate();
+            if (isBlank(paramHiredate) || !isValidDate(paramHiredate)) {
+                errorMsgs.put("hiredate", "請填寫正確雇用日期");
+            } else {
+                empVO.setHiredate(new Date(parseDate(json.getHiredate().trim()).getTime()));
+            }
+
+            String paramSal = json.getSal();
+            if (isBlank(paramSal) || !isNaturalNumbers(paramSal)) {
+                errorMsgs.put("sal", "請填寫正確薪水");
+            } else {
+                empVO.setSal(Integer.parseInt(json.getSal()));
+            }
+
+            String paramComm = json.getComm();
+            if (isBlank(paramComm) || !isPositiveDouble(paramComm)) {
+                errorMsgs.put("comm", "請填寫正確獎金");
+            } else {
+                empVO.setComm(Double.parseDouble(json.getComm()));
+            }
+
+            String paramDeptno = json.getDeptno();
+            if (isBlank(paramDeptno) || !isNaturalNumbers(paramDeptno)) {
+                errorMsgs.put("deptno", "請選擇部門");
+            } else {
+                empVO.setDeptno(Integer.parseInt(json.getDeptno()));
+            }
+
+            empVOs.add(empVO);
+            if (!errorMsgs.isEmpty()) {
+                errorMsgsList.add(errorMsgs);
+            }
+        }
+
+        if (!errorMsgsList.isEmpty()) {
+            request.setAttribute("errorMsgsList", errorMsgsList);
+            // 含有輸入格式錯誤的empVO物件s，也存入 HttpServletRequest
+            request.setAttribute("empVOs", empVOs);
+            // 將頁面轉交回原本新增頁面
+            return PAGE_ADD_EMPS;
+        }
+
+        /** 4. Invoke Business Logic */
+        empService.insert(empVOs);
+
+        /** 5. Select Next View */
         return doFindAction(request);
     }
 
